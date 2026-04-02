@@ -23,7 +23,6 @@ import {
   useLocation,
   useNavigate
 } from 'react-router-dom';
-
 import { IngredientDetails, Modal, OrderInfo } from '@components';
 import {
   selectIngredients,

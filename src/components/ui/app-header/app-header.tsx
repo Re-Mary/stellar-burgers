@@ -1,7 +1,4 @@
 import React, { FC } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import clsx from 'clsx';
-
 import styles from './app-header.module.css';
 import { TAppHeaderUIProps } from './type';
 import {
@@ -10,6 +7,8 @@ import {
   Logo,
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
+import { NavLink, Link } from 'react-router-dom';
+import clsx from 'clsx';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   clsx(styles.link, 'text text_type_main-default ml-2', {

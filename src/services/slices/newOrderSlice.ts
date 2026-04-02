@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { orderBurgerApi } from '@api';
-import { TConstructorIngredient, TIngredient } from '@utils-types';
+import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
 
 import { clearConstructor } from './constructorSlice';
 
 type TNewOrderState = {
   orderRequest: boolean;
-  orderModalData: { number: number } | null;
+  orderModalData: TOrder | null;
   error: string | null;
 };
 
@@ -41,7 +41,7 @@ export const submitOrder = createAsyncThunk(
     try {
       const data = await orderBurgerApi(ingredientIds);
       dispatch(clearConstructor());
-      return { number: data.order.number };
+      return { number: data.order.number } as TOrder;
     } catch (err) {
       const message =
         err && typeof err === 'object' && 'message' in err

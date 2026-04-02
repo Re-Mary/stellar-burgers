@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { AppHeaderUI } from '@ui';
 import { useSelector } from '../../services/store';
-import { selectIsAuthenticated, selectUser } from '../../services/selectors';
+import { selectIsAuthenticated, selectUser } from '@selectors';
 
 export const AppHeader: FC = () => {
   const user = useSelector(selectUser);

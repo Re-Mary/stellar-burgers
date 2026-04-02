@@ -1,9 +1,9 @@
 import { FC, useEffect, useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-
-import { Preloader } from '../ui/preloader';
-import { OrderInfoUI } from '../ui/order-info';
+import { Preloader } from '@ui';
+import { OrderInfoUI } from '@ui';
 import { TIngredient } from '@utils-types';
+
+import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   selectFeedOrders,
@@ -12,8 +12,8 @@ import {
   selectOrderDetailsError,
   selectOrderDetailsLoading,
   selectProfileOrders
-} from '../../services/selectors';
-import { clearCurrentOrder, fetchOrderByNumber } from '../../services/slices';
+} from '@selectors';
+import { clearCurrentOrder, fetchOrderByNumber } from '@slices';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
@@ -47,6 +47,7 @@ export const OrderInfo: FC = () => {
 
   const orderData = isModal ? orderFromLists ?? orderFromApi : orderFromApi;
 
+  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) {
       return null;
@@ -124,5 +125,5 @@ export const OrderInfo: FC = () => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} isModal={isModal} />;
+  return <OrderInfoUI orderInfo={orderInfo} />;
 };

@@ -1,13 +1,10 @@
 import { FC } from 'react';
-import { useParams } from 'react-router-dom';
+import { Preloader } from '@ui';
+import { IngredientDetailsUI } from '@ui';
 
-import { Preloader } from '../ui/preloader';
-import { IngredientDetailsUI } from '../ui/ingredient-details';
+import { useParams } from 'react-router-dom';
 import { useSelector } from '../../services/store';
-import {
-  selectIngredientById,
-  selectIngredientsLoading
-} from '../../services/selectors';
+import { selectIngredientById, selectIngredientsLoading } from '@selectors';
 
 export const IngredientDetails: FC = () => {
   const { id } = useParams<{ id: string }>();

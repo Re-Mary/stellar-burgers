@@ -1,15 +1,15 @@
 import { FC, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
+
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   selectConstructorItems,
   selectIsAuthenticated,
   selectNewOrder
-} from '../../services/selectors';
-import { clearOrderModal, submitOrder } from '../../services/slices';
+} from '@selectors';
+import { clearOrderModal, submitOrder } from '@slices';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();

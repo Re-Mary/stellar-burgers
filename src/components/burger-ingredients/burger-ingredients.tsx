@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { TTabMode } from '@utils-types';
-import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+import { BurgerIngredientsUI } from '@ui';
 import { useSelector } from '../../services/store';
-import { selectIngredients } from '../../services/selectors';
+import { selectIngredients } from '@selectors';
 
 export const BurgerIngredients: FC = () => {
   const items = useSelector(selectIngredients);

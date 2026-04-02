@@ -1,14 +1,9 @@
-import { useEffect } from 'react';
-
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import {
-  fetchFeeds,
-  parseFeedSocketMessage,
-  setFeedFromSocket
-} from '../../services/slices';
+import { useEffect } from 'react';
+import { fetchFeeds, parseFeedSocketMessage, setFeedFromSocket } from '@slices';
 import { useDispatch, useSelector } from '../../services/store';
-import { selectFeed, selectFeedOrders } from '../../services/selectors';
+import { selectFeed, selectFeedOrders } from '@selectors';
 import { getPublicFeedWsUrl } from '../../utils/ws';
 import { FC } from 'react';
 
@@ -36,6 +31,7 @@ export const Feed: FC = () => {
         }
       } catch {
         /* игнорируем некорректные сообщения */
+        console.log('We ignore this message');
       }
     };
     return () => {

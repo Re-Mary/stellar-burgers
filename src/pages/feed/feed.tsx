@@ -1,15 +1,55 @@
+import { useEffect } from 'react';
+
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
+import {
+  fetchFeeds,
+  parseFeedSocketMessage,
+  setFeedFromSocket
+} from '../../services/slices';
+import { useDispatch, useSelector } from '../../services/store';
+import { selectFeed, selectFeedOrders } from '../../services/selectors';
+import { getPublicFeedWsUrl } from '../../utils/ws';
 import { FC } from 'react';
 
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector(selectFeed);
+  const orders = useSelector(selectFeedOrders);
 
-  if (!orders.length) {
+  useEffect(() => {
+    dispatch(fetchFeeds());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const url = getPublicFeedWsUrl();
+    if (!url || !/^wss?:\/\//i.test(url)) {
+      return;
+    }
+    const ws = new WebSocket(url);
+    ws.onmessage = (event) => {
+      try {
+        const parsed = JSON.parse(event.data as string);
+        const data = parseFeedSocketMessage(parsed);
+        if (data) {
+          dispatch(setFeedFromSocket(data));
+        }
+      } catch {
+        /* игнорируем некорректные сообщения */
+      }
+    };
+    return () => {
+      ws.close();
+    };
+  }, [dispatch]);
+
+  const showLoader = isLoading && orders.length === 0;
+
+  if (showLoader) {
     return <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  return (
+    <FeedUI orders={orders} handleGetFeeds={() => dispatch(fetchFeeds())} />
+  );
 };

@@ -1,4 +1,9 @@
 .wrap {
+  margin: 120px auto;
+  width: 640px;
+}
+
+.wrap_modal {
   margin: 0 auto;
   width: 640px;
 }

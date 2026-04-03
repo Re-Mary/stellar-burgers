@@ -1,25 +1,57 @@
-import { FC, useMemo } from 'react';
-import { Preloader } from '../ui/preloader';
-import { OrderInfoUI } from '../ui/order-info';
+import { FC, useEffect, useMemo } from 'react';
+import { Preloader } from '@ui';
+import { OrderInfoUI } from '@ui';
 import { TIngredient } from '@utils-types';
 
-export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+import { useLocation, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  selectFeedOrders,
+  selectIngredients,
+  selectOrderDetails,
+  selectOrderDetailsError,
+  selectOrderDetailsLoading,
+  selectProfileOrders
+} from '@selectors';
+import { clearCurrentOrder, fetchOrderByNumber } from '@slices';
 
-  const ingredients: TIngredient[] = [];
+export const OrderInfo: FC = () => {
+  const { number } = useParams<{ number: string }>();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const isModal = Boolean(
+    (location.state as { background?: unknown } | null)?.background
+  );
+
+  const ordersFromFeed = useSelector(selectFeedOrders);
+  const ordersFromProfile = useSelector(selectProfileOrders);
+  const orderFromApi = useSelector(selectOrderDetails);
+  const isOrderLoading = useSelector(selectOrderDetailsLoading);
+  const orderLoadError = useSelector(selectOrderDetailsError);
+  const ingredients = useSelector(selectIngredients);
+
+  const orderFromLists = useMemo(() => {
+    if (!number) {
+      return undefined;
+    }
+    const n = Number(number);
+    if (Number.isNaN(n)) {
+      return undefined;
+    }
+    return (
+      ordersFromFeed.find((order) => order.number === n) ||
+      ordersFromProfile.find((order) => order.number === n)
+    );
+  }, [number, ordersFromFeed, ordersFromProfile]);
+
+  const orderData = isModal ? orderFromLists ?? orderFromApi : orderFromApi;
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (!orderData || !ingredients.length) {
+      return null;
+    }
 
     const date = new Date(orderData.createdAt);
 
@@ -59,7 +91,37 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  useEffect(() => {
+    if (!number) {
+      return;
+    }
+    const orderNumber = Number(number);
+    if (Number.isNaN(orderNumber)) {
+      return;
+    }
+
+    if (!isModal) {
+      dispatch(fetchOrderByNumber(orderNumber));
+      return () => {
+        dispatch(clearCurrentOrder());
+      };
+    }
+
+    if (isModal && !orderFromLists) {
+      dispatch(fetchOrderByNumber(orderNumber));
+    }
+    return undefined;
+  }, [dispatch, number, isModal, orderFromLists]);
+
+  if (!isOrderLoading && !orderInfo && orderLoadError) {
+    return (
+      <p className='text text_type_main-medium pt-10 pl-5 text_color_error'>
+        {orderLoadError}
+      </p>
+    );
+  }
+
+  if (isOrderLoading || !orderInfo) {
     return <Preloader />;
   }
 

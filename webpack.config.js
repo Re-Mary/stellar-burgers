@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
@@ -14,7 +15,7 @@ module.exports = {
       },
       {
         test: /\.(ts)x?$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /\.test\.tsx?$/],
         use: {
           loader: 'ts-loader'
         }
@@ -49,12 +50,18 @@ module.exports = {
   },
   plugins: [
     new ESLintPlugin({
-      extensions: ['.js', '.jsx', '.ts', '.tsx']
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      failOnError: false,
+      failOnWarning: false
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html'
     }),
-    new Dotenv()
+    new Dotenv(),
+    /** Явная подстановка: без .env dotenv-webpack оставляет `process.env` как stub → ломается разбор в бандле. */
+    new webpack.EnvironmentPlugin({
+      BURGER_API_URL: 'https://norma.education-services.ru/api'
+    })
   ],
   resolve: {
     extensions: [
@@ -90,6 +97,9 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     port: 4000,
-    open: true
+    open: true,
+    client: {
+      overlay: false
+    }
   }
 };

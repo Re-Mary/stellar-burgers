@@ -63,5 +63,13 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["cypress/**/*.ts", "cypress/**/*.tsx"],
+      "extends": ["plugin:cypress/recommended"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["cypress", "@typescript-eslint"]
+    }
+  ]
 }
